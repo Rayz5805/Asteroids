@@ -18,16 +18,18 @@ def main():
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
+    texts = pygame.sprite.Group()
 
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = updatable
     Shot.containers = (shots, updatable, drawable)
+    Countdown.containers = (texts, updatable, drawable)
 
 
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
     asteroid_Field = AsteroidField()
-    countdown = Countdown(GAME_COUNTDOWN, 40)
+    countdown = Countdown(SCREEN_WIDTH / 2 - 40, SCREEN_HEIGHT / 6, 40, "")
 
     while True:
         for event in pygame.event.get():
@@ -35,29 +37,33 @@ def main():
                 return
 
         if countdown.timer <= 0:
-            print("Game over!")
-            sys.exit()
+            player.death()
 
         updatable.update(dt)
-        countdown.update(dt)
 
         screen.fill("black")
 
-        countdown.draw(screen)
-
         for asteroid in asteroids:
             if asteroid.collideWith(player):
-                print("Game over!")
-                sys.exit()
+                drawable.add(player.death())
+                countdown.kill()
+                asteroid.split()
+
+            if asteroid.checkOutOfBound():
+                asteroid.kill()
 
             for shot in shots:
                 if asteroid.collideWith(shot):
                     shot.kill()
                     asteroid.split()
-                    countdown.add(dt)
+                    countdown.addTime()
 
+                if shot.checkOutOfBound():
+                    shot.kill()
+    
         for obj in drawable:
             obj.draw(screen)
+        
         pygame.display.flip()
 
         dt = clock.tick(60) / 1000
