@@ -22,6 +22,11 @@ class Player(CircleShape):
     def draw(self, screen):
         pygame.draw.polygon(screen, "white", self.triangle(), 2)
 
+    '''def drawGetHit(self, screen):
+        if round(self.survive_time * 10) % 2 == 1:
+            return pygame.draw.polygon(screen, "black", self.triangle(), 2)'''
+        
+
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED * dt
 
@@ -36,10 +41,21 @@ class Player(CircleShape):
         shot = Shot(self.position.x, self.position.y)
         shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
 
+    def stayInBound(self, dt):
+        if self.position.x > SCREEN_WIDTH:
+            self.position.x -= PLAYER_SPEED * dt
+        if self.position.x < 0:
+            self.position.x += PLAYER_SPEED * dt
+        if self.position.y > SCREEN_HEIGHT:
+            self.position.y -= PLAYER_SPEED * dt
+        if self.position.y < 0:
+            self.position.y += PLAYER_SPEED * dt
+
     def update(self, dt):
         keys = pygame.key.get_pressed()
         self.shoot_timer -= dt
         self.survive_time += dt
+        self.stayInBound(dt)
 
         if keys[pygame.K_a]:
             self.rotate(-dt)
@@ -56,6 +72,7 @@ class Player(CircleShape):
         self.kill()
         gameOver = Text(SCREEN_WIDTH / 3, SCREEN_HEIGHT / 3, 80, "GAME OVER")
         subtext = Text(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 20, f"You've survived for {round(self.survive_time, 1)}s")
-        return gameOver, subtext
+        instuction = Text(SCREEN_WIDTH / 2 -60, SCREEN_HEIGHT *2/3, 25, "Press X to quit")
+        return gameOver, subtext, instuction
         
 

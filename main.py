@@ -3,8 +3,7 @@ import sys
 from constants import *
 from player import Player
 from shot import Shot
-from asteroid import Asteroid
-from asteroidfield import AsteroidField
+from asteroid import Asteroid, AsteroidField
 from text import Countdown
 
 def main():
@@ -28,16 +27,17 @@ def main():
 
 
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
-    asteroid_Field = AsteroidField()
+    asteroid_field = AsteroidField()
     countdown = Countdown(SCREEN_WIDTH / 2 - 40, SCREEN_HEIGHT / 6, 40, "")
 
     while True:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT or pygame.key.get_pressed()[pygame.K_x]:
                 return
 
         if countdown.timer <= 0:
-            player.death()
+            drawable.add(player.death())
+            countdown.kill()
 
         updatable.update(dt)
 
@@ -45,20 +45,21 @@ def main():
 
         for asteroid in asteroids:
             if asteroid.collideWith(player):
+                #drawable.add(player.drawGetHit(screen))
                 drawable.add(player.death())
                 countdown.kill()
                 asteroid.split()
 
-            if asteroid.checkOutOfBound():
+            if asteroid.checkTooOutOfBound():
                 asteroid.kill()
 
             for shot in shots:
                 if asteroid.collideWith(shot):
                     shot.kill()
                     asteroid.split()
-                    countdown.addTime()
+                    countdown.addTime()##
 
-                if shot.checkOutOfBound():
+                if shot.checkTooOutOfBound():
                     shot.kill()
     
         for obj in drawable:
