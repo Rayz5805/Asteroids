@@ -11,7 +11,7 @@ class Text(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.text_size = text_size
-        self.font = pygame.font.SysFont("Arial", text_size)
+        self.font = pygame.font.SysFont("consolas", text_size)
         self.inputs = inputs
 
     def draw(self, screen):

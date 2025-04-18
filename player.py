@@ -22,13 +22,11 @@ class Player(CircleShape):
         return [a, b, c]
 
     def draw(self, screen):
-        pygame.draw.polygon(screen, "white", self.triangle(), 2)
-        font = pygame.font.SysFont("Arial", 20)###
-        life_display = font.render(f"x {self.life}", 1, "white")
-        screen.blit(life_display, (self.position.x - life_display.get_width()/2, self.position.y + life_display.get_height()/2))
-
         if not self.able_collision and round(self.survive_time * 10) % 2 == 1:
-            pygame.draw.polygon(screen, "black", self.triangle(), 2)
+            return
+        pygame.draw.polygon(screen, "white", self.triangle(), 2)
+        life_display = Text(self.position.x, self.position.y + 30, 20, f"x {self.life}")
+        life_display.draw(screen)
 
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED * dt
@@ -82,9 +80,9 @@ class Player(CircleShape):
 
     def death(self):
         self.kill()
-        gameOver = Text(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3, 80, "GAME OVER")
-        subtext = Text(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 20, f"You've survived for {round(self.survive_time, 1)}s")
-        instuction = Text(SCREEN_WIDTH / 2, SCREEN_HEIGHT *2/3, 25, "Press X to exit")
+        gameOver = Text(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3, 100, "GAME OVER")
+        subtext = Text(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 30, f"You've survived for {round(self.survive_time, 1)}s")
+        instuction = Text(SCREEN_WIDTH / 2, SCREEN_HEIGHT *2/3, 20, "Press R to restart")
         return gameOver, subtext, instuction
         
 
