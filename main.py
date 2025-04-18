@@ -6,6 +6,29 @@ from shot import Shot
 from asteroid import Asteroid, AsteroidField
 from text import Countdown
 
+def handleAsteroidCollision(asteroid, player, countdown):
+    if asteroid.checkTooOutOfBound():
+        asteroid.kill()
+    
+    if asteroid.collideWith(player):
+        if player.life > 1:
+            player.getHit() 
+        else:
+            countdown.kill()
+            asteroid.split()
+            return player.death()
+        
+def handleShotCollision(shot, asteroid, countdown):
+    if shot.checkTooOutOfBound():
+        shot.kill()
+
+    if asteroid.collideWith(shot):
+        shot.kill()
+        asteroid.split()
+        countdown.addTime()##
+    
+
+
 def main():
     pygame.init()
     pygame.display.set_caption("Asteroids")
@@ -28,7 +51,7 @@ def main():
 
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
     asteroid_field = AsteroidField()
-    countdown = Countdown(SCREEN_WIDTH / 2 - 40, SCREEN_HEIGHT / 6, 40, "")
+    countdown = Countdown(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 6, 40, "")
 
     while True:
         for event in pygame.event.get():
@@ -44,23 +67,12 @@ def main():
         screen.fill("black")
 
         for asteroid in asteroids:
-            if asteroid.collideWith(player):
-                #drawable.add(player.drawGetHit(screen))
-                drawable.add(player.death())
-                countdown.kill()
-                asteroid.split()
-
-            if asteroid.checkTooOutOfBound():
-                asteroid.kill()
+            death_message = handleAsteroidCollision(asteroid, player, countdown)
+            if death_message:
+                drawable.add(death_message)
 
             for shot in shots:
-                if asteroid.collideWith(shot):
-                    shot.kill()
-                    asteroid.split()
-                    countdown.addTime()##
-
-                if shot.checkTooOutOfBound():
-                    shot.kill()
+                handleShotCollision(shot, asteroid, countdown)
     
         for obj in drawable:
             obj.draw(screen)

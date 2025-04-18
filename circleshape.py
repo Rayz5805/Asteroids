@@ -11,6 +11,7 @@ class CircleShape(pygame.sprite.Sprite):
         self.position = pygame.Vector2(x, y)
         self.velocity = pygame.Vector2(0, 0)
         self.radius = radius
+        self.able_collision = True
 
     def draw(self, screen):
         pass
@@ -19,8 +20,10 @@ class CircleShape(pygame.sprite.Sprite):
         pass
 
     def collideWith(self, other):
-        distance = pygame.Vector2.distance_to(self.position, other.position)
-        return self.radius + other.radius >= distance
+        if self.able_collision and other.able_collision:
+            distance = pygame.Vector2.distance_to(self.position, other.position)
+            return self.radius + other.radius >= distance
+        return False
 
     def checkTooOutOfBound(self):
         return (

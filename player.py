@@ -9,7 +9,9 @@ class Player(CircleShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.shoot_timer = 0
+        self.hitless_timer = 0
         self.survive_time = 0
+        self.life = PLAYER_LIFE
     
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -21,11 +23,12 @@ class Player(CircleShape):
 
     def draw(self, screen):
         pygame.draw.polygon(screen, "white", self.triangle(), 2)
+        font = pygame.font.SysFont("Arial", 20)###
+        life_display = font.render(f"x {self.life}", 1, "white")
+        screen.blit(life_display, (self.position.x - life_display.get_width()/2, self.position.y + life_display.get_height()/2))
 
-    '''def drawGetHit(self, screen):
-        if round(self.survive_time * 10) % 2 == 1:
-            return pygame.draw.polygon(screen, "black", self.triangle(), 2)'''
-        
+        if not self.able_collision and round(self.survive_time * 10) % 2 == 1:
+            pygame.draw.polygon(screen, "black", self.triangle(), 2)
 
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED * dt
@@ -54,8 +57,12 @@ class Player(CircleShape):
     def update(self, dt):
         keys = pygame.key.get_pressed()
         self.shoot_timer -= dt
+        self.hitless_timer -= dt
         self.survive_time += dt
         self.stayInBound(dt)
+
+        if self.hitless_timer <= 0:
+            self.able_collision = True
 
         if keys[pygame.K_a]:
             self.rotate(-dt)
@@ -68,11 +75,16 @@ class Player(CircleShape):
         if keys[pygame.K_SPACE]:
             self.shoot()
 
+    def getHit(self):
+        self.life -= 1
+        self.hitless_timer = PLAYER_HITLESS_COOLDOWN
+        self.able_collision = False
+
     def death(self):
         self.kill()
-        gameOver = Text(SCREEN_WIDTH / 3, SCREEN_HEIGHT / 3, 80, "GAME OVER")
+        gameOver = Text(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3, 80, "GAME OVER")
         subtext = Text(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 20, f"You've survived for {round(self.survive_time, 1)}s")
-        instuction = Text(SCREEN_WIDTH / 2 -60, SCREEN_HEIGHT *2/3, 25, "Press X to quit")
+        instuction = Text(SCREEN_WIDTH / 2, SCREEN_HEIGHT *2/3, 25, "Press X to exit")
         return gameOver, subtext, instuction
         
 
