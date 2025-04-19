@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 from circleshape import CircleShape
 from constants import *
 
@@ -7,8 +8,9 @@ class Asteroid(CircleShape):
     def __init__(self, x, y, radius):
         super().__init__(x, y, radius)
 
-    def draw(self, screen):
-        pygame.draw.circle(screen, "white", self.position, self.radius, 2)
+    def draw(self, surface):
+        pygame.draw.circle(surface, "white", self.position, self.radius, 2)
+        #pygame.draw.polygon(screen, "white", self.generatePoints(), 2)
 
     def update(self, dt):
         self.position += self.velocity * dt
@@ -28,6 +30,21 @@ class Asteroid(CircleShape):
         asteroid.velocity = new_velocity1 * 1.2
         asteroid = Asteroid(self.position.x, self.position.y, self.radius - ASTEROID_MIN_RADIUS)
         asteroid.velocity = new_velocity2 * 1.2
+
+    def generatePoints(self):
+        roughness = 0.4
+        points = 12
+        angle_step = 2*math.pi /points
+        coords = []
+
+        for i in range(points):
+            angle = i * angle_step
+            offset = 1 + random.uniform(-roughness, roughness)
+            r = self.radius * offset
+            x = self.position.x + math.cos(angle) *r
+            y = self.position.y + math.sin(angle) *r
+            coords.append((x,y))
+        return coords
 
 class AsteroidField(pygame.sprite.Sprite):
     edges = [
