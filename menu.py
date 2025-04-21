@@ -28,19 +28,25 @@ def menu():
             new_width = max(1, int(SCREEN_WIDTH * scale))
             offset = (SCREEN_WIDTH - new_width) //2
             scaled_slice = pygame.transform.scale(slice_img, (new_width , 1))
+
             screen.blit(scaled_slice, (offset, y))
 
     dt = 0
     asteroid_field = AsteroidField()
-    title_asteroid = Text(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 150, "ASTER0ID")
-    start_key = Instruction(SCREEN_WIDTH / 2, SCREEN_HEIGHT *2/3, 30, "Press K to start!")
+    asteroid_text = Text(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 150, "ASTER0ID")
+
+    start_text = Instruction(SCREEN_WIDTH / 2, SCREEN_HEIGHT *2/3, 30, "Press C to start!")
+    #tutorial_text = Instruction(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 8, 30, "Tutorial")
+    #up_text = Instruction(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 8 - 20, 30, "^")
 
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and pygame.key.get_pressed()[pygame.K_x]):
                 return "quit"
-            if event.type == pygame.KEYDOWN and pygame.key.get_pressed()[pygame.K_k]:
+            if event.type == pygame.KEYDOWN and pygame.key.get_pressed()[pygame.K_c]:
                 return "game"
+            if event.type == pygame.KEYDOWN and pygame.key.get_pressed()[pygame.K_UP]:
+                pass
 
         updatable.update(dt)
         

@@ -1,6 +1,5 @@
 import pygame
 import random
-import math
 from circleshape import CircleShape
 from constants import *
 
@@ -10,7 +9,6 @@ class Asteroid(CircleShape):
 
     def draw(self, surface):
         pygame.draw.circle(surface, "white", self.position, self.radius, 2)
-        #pygame.draw.polygon(screen, "white", self.generatePoints(), 2)
 
     def update(self, dt):
         self.position += self.velocity * dt
@@ -31,20 +29,6 @@ class Asteroid(CircleShape):
         asteroid = Asteroid(self.position.x, self.position.y, self.radius - ASTEROID_MIN_RADIUS)
         asteroid.velocity = new_velocity2 * 1.2
 
-    def generatePoints(self):
-        roughness = 0.4
-        points = 12
-        angle_step = 2*math.pi /points
-        coords = []
-
-        for i in range(points):
-            angle = i * angle_step
-            offset = 1 + random.uniform(-roughness, roughness)
-            r = self.radius * offset
-            x = self.position.x + math.cos(angle) *r
-            y = self.position.y + math.sin(angle) *r
-            coords.append((x,y))
-        return coords
 
 class AsteroidField(pygame.sprite.Sprite):
     edges = [
@@ -79,15 +63,16 @@ class AsteroidField(pygame.sprite.Sprite):
         asteroid.velocity = velocity
 
     def update(self, dt):
-        self.spawn_timer += dt
-        if self.spawn_timer > ASTEROID_SPAWN_RATE:
-            self.spawn_timer = 0
+        self.spawn_timer -= dt
+        if self.spawn_timer > 0:
+            return
 
-            # spawn a new asteroid at a random edge
-            edge = random.choice(self.edges)
-            speed = random.randint(40, 100)
-            velocity = edge[0] * speed
-            velocity = velocity.rotate(random.randint(-30, 30))
-            position = edge[1](random.uniform(0, 1))
-            kind = random.randint(1, ASTEROID_KINDS)
-            self.spawn(ASTEROID_MIN_RADIUS * kind, position, velocity)
+        self.spawn_timer = ASTEROID_SPAWN_RATE
+
+        edge = random.choice(self.edges)
+        speed = random.randint(40, 100)
+        velocity = edge[0] * speed
+        velocity = velocity.rotate(random.randint(-30, 30))
+        position = edge[1](random.uniform(0, 1))
+        kind = random.randint(1, ASTEROID_KINDS)
+        self.spawn(ASTEROID_MIN_RADIUS * kind, position, velocity)

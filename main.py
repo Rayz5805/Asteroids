@@ -11,11 +11,12 @@ from game import game
 def main():
     pygame.init()
     pygame.display.set_caption("Asteroids")
+    
     while True:
-        game_message = menu() 
-        if game_message == "game":
+        menu_message = menu() 
+        if menu_message == "game":
             game()
-        if game_message == "quit":
+        if menu_message == "quit":
             pygame.quit()
             sys.exit()
 

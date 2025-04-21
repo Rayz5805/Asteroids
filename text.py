@@ -13,11 +13,8 @@ class Text(pygame.sprite.Sprite):
         self.text_size = text_size
         self.font = pygame.font.SysFont("consolas", text_size)
         self.inputs = inputs
-        self.blinking = False
 
     def draw(self, surface):
-        if self.blinking and round(self.survive_time * 10) % 2 == 1:
-            return
         text = self.font.render(self.inputs, 1, "white")
         surface.blit(text, (self.x - text.get_width()/2, self.y - text.get_height()/2))
 

@@ -46,6 +46,32 @@ def game():
             asteroid.split()
             countdown.addTime()##
 
+    def pause():
+        pause_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+        pause_text = Instruction(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 120, "Continue?")
+
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and pygame.key.get_pressed()[pygame.K_x]):
+                    return False
+                if event.type == pygame.KEYDOWN and pygame.key.get_pressed()[pygame.K_c]:
+                    pause_text.kill()
+                    return True
+
+            pause_text.update(dt)
+            pause_surface.fill((0,0,0,200))
+            pause_text.draw(pause_surface)
+
+            for obj in drawable:
+                obj.draw(surface)
+            screen.blit(surface, (0,0))
+            pause_surface.blit(scanline_surface, (0,0))
+            screen.blit(pause_surface, (0,0))
+            
+            
+            pygame.display.flip()
+            clock.tick(30)
+
     dt = 0
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
     asteroid_field = AsteroidField()
@@ -55,7 +81,7 @@ def game():
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and pygame.key.get_pressed()[pygame.K_x]):
-                running = False
+                running = pause()
             if event.type == pygame.KEYDOWN and pygame.key.get_pressed()[pygame.K_r]:
                 game()
                 return
@@ -66,7 +92,7 @@ def game():
 
         updatable.update(dt)
 
-        surface.fill((20,20,20,))
+        surface.fill((20,20,20))
         screen.fill("black")
 
         for asteroid in asteroids:
@@ -85,3 +111,4 @@ def game():
         pygame.display.flip()
 
         dt = clock.tick(60) / 1000
+                
