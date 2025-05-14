@@ -28,7 +28,7 @@ class Countdown(Text):
         self.timer = GAME_COUNTDOWN
 
     def draw(self, surface):
-        if self.timer < 5 and round(self.timer * 9) % 3 == 0:
+        if self.timer < 5 and round(self.timer * 9) % 3 == 0: #blink when timer < 5
             return
         countdown_text = self.font.render(f"{round(self.timer, 1)}s", 1, "white")
         surface.blit(countdown_text, (self.x - countdown_text.get_width()/2, self.y - countdown_text.get_height()/2))
@@ -46,7 +46,7 @@ class Instruction(Text):
         self.timer = 0
 
     def draw(self, surface):
-        if round(self.timer * 2) % 2 == 0:
+        if round(self.timer * 2) % 2 == 0: #blink
             return
         instuction_text = self.font.render(self.inputs, 1, "white")
         surface.blit(instuction_text, (self.x - instuction_text.get_width()/2, self.y - instuction_text.get_height()/2))

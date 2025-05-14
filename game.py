@@ -3,7 +3,7 @@ from constants import *
 from player import Player
 from shot import Shot
 from asteroid import Asteroid, AsteroidField
-from text import Countdown, Instruction
+from text import Text, Countdown, Instruction
 
 def game():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -22,6 +22,7 @@ def game():
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = updatable
     Shot.containers = (shots, updatable, drawable)
+    Text.containers = drawable
     Countdown.containers = (updatable, drawable)
     Instruction.containers = (updatable, drawable)
 
@@ -29,13 +30,12 @@ def game():
         if asteroid.checkTooOutOfBound():
             asteroid.kill()
         
-        if asteroid.collideWith(player):
-            if player.life > 1:
-                player.getHit() 
-            else:
+        if asteroid.collideWith(player) and player.life > 0:
+            player.getHit() 
+            if player.life < 1:
                 countdown.kill()
                 asteroid.split()
-                return player.death()
+                drawable.add(player.death())
         
     def handleShotCollision(shot, asteroid, countdown):
         if shot.checkTooOutOfBound():
@@ -50,11 +50,14 @@ def game():
         pause_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
         pause_text = Instruction(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 120, "Continue?")
 
-        while True:
+        pausing = True
+        while pausing:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and pygame.key.get_pressed()[pygame.K_x]):
+                    pausing = False
                     return False
                 if event.type == pygame.KEYDOWN and pygame.key.get_pressed()[pygame.K_c]:
+                    pausing = False
                     pause_text.kill()
                     return True
 
@@ -72,11 +75,13 @@ def game():
             pygame.display.flip()
             clock.tick(30)
 
+
     dt = 0
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
     asteroid_field = AsteroidField()
     countdown = Countdown(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 6, 40, "")
 
+    #the game loop
     running = True
     while running:
         for event in pygame.event.get():
@@ -84,11 +89,11 @@ def game():
                 running = pause()
             if event.type == pygame.KEYDOWN and pygame.key.get_pressed()[pygame.K_r]:
                 game()
-                return
+                return False
 
         if countdown.timer <= 0:
-            drawable.add(player.death())
             countdown.kill()
+            drawable.add(player.death())
 
         updatable.update(dt)
 
@@ -96,9 +101,7 @@ def game():
         screen.fill("black")
 
         for asteroid in asteroids:
-            death_message = handleAsteroidCollision(asteroid, player, countdown)
-            if death_message:
-                drawable.add(death_message)
+            handleAsteroidCollision(asteroid, player, countdown)
 
             for shot in shots:
                 handleShotCollision(shot, asteroid, countdown)

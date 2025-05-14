@@ -22,11 +22,12 @@ class Player(CircleShape):
         return [a, b, c]
 
     def draw(self, surface):
-        if not self.able_collision and round(self.survive_time * 10) % 2 == 1:
+        if not self.able_collision and round(self.survive_time * 10) % 2 == 1: #blink when get hit
             return
         pygame.draw.polygon(surface, "white", self.triangle(), 2)
         life_display = Text(self.position.x, self.position.y + 30, 20, f"x {self.life}")
         life_display.draw(surface)
+        life_display.kill()
 
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED * dt
@@ -78,9 +79,9 @@ class Player(CircleShape):
         self.hitless_timer = PLAYER_HITLESS_COOLDOWN
         self.able_collision = False
 
-    def death(self):
+    def death(self): #game over screen
         self.kill()
-        gameOver = Text(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3, 100, "GAME OVER")
+        gameOver = Text(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3, 120, "GAME OVER")
         subtext = Text(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 30, f"You've survived for {round(self.survive_time, 1)}s")
         instuction = Instruction(SCREEN_WIDTH / 2, SCREEN_HEIGHT *2/3, 20, "Press R to restart")
         return gameOver, subtext, instuction

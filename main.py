@@ -1,10 +1,5 @@
 import pygame
 import sys
-from constants import *
-from player import Player
-from shot import Shot
-from asteroid import Asteroid, AsteroidField
-from text import Text, Countdown, Instruction
 from menu import menu
 from game import game
 

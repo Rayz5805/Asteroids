@@ -31,6 +31,7 @@ class Asteroid(CircleShape):
 
 
 class AsteroidField(pygame.sprite.Sprite):
+    #give correct direction and position for asteroid of chosen edge
     edges = [
         [
             pygame.Vector2(1, 0),
@@ -68,7 +69,7 @@ class AsteroidField(pygame.sprite.Sprite):
             return
 
         self.spawn_timer = ASTEROID_SPAWN_RATE
-
+        #asteroid spawn at random edge
         edge = random.choice(self.edges)
         speed = random.randint(40, 100)
         velocity = edge[0] * speed

@@ -19,6 +19,7 @@ def menu():
     Text.containers = drawable
     Instruction.containers = (updatable, drawable)
 
+    #screen warp effect
     def warpBlit(screen, surface):
         for y in range(SCREEN_HEIGHT):
             slice_rect = pygame.Rect(0, y, SCREEN_WIDTH, 1)
@@ -31,13 +32,39 @@ def menu():
 
             screen.blit(scaled_slice, (offset, y))
 
+    def tutorial():
+        tutorial_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+        tutorial_text = Text(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4, 50, "Tutorial on work, press DOWN key")
+
+        pausing = True
+        while pausing:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN and pygame.key.get_pressed()[pygame.K_DOWN]:
+                    pausing = False
+                    tutorial_text.kill()
+
+            tutorial_surface.fill((0,0,0,200))
+            tutorial_text.draw(tutorial_surface)
+
+            for obj in drawable:
+                obj.draw(surface)
+            screen.blit(surface, (0,0))
+            tutorial_surface.blit(scanline_surface, (0,0))
+            screen.blit(tutorial_surface, (0,0))
+            
+            
+            pygame.display.flip()
+            clock.tick(30)
+
+
+
     dt = 0
     asteroid_field = AsteroidField()
     asteroid_text = Text(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 150, "ASTER0ID")
 
     start_text = Instruction(SCREEN_WIDTH / 2, SCREEN_HEIGHT *2/3, 30, "Press C to start!")
-    #tutorial_text = Instruction(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 8, 30, "Tutorial")
-    #up_text = Instruction(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 8 - 20, 30, "^")
+    tutorial_text = Instruction(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 8, 30, "Tutorial")
+    up_text = Instruction(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 8 - 20, 30, "^")
 
     while True:
         for event in pygame.event.get():
@@ -46,7 +73,7 @@ def menu():
             if event.type == pygame.KEYDOWN and pygame.key.get_pressed()[pygame.K_c]:
                 return "game"
             if event.type == pygame.KEYDOWN and pygame.key.get_pressed()[pygame.K_UP]:
-                pass
+                tutorial()
 
         updatable.update(dt)
         
